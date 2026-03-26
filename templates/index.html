@@ -1451,11 +1451,36 @@
                     initScanner();
                 }
 
+                // Get available cameras and prefer rear camera
+                let cameraId = undefined;
+                try {
+                    const cameras = await Html5Qrcode.getCameras();
+                    if (cameras && cameras.length > 0) {
+                        // Prefer rear camera for QR scanning
+                        const rearCamera = cameras.find(c => 
+                            c.label.toLowerCase().includes('back') || 
+                            c.label.toLowerCase().includes('rear') ||
+                            c.label.toLowerCase().includes('environment')
+                        );
+                        cameraId = rearCamera ? rearCamera.id : cameras[0].id;
+                    }
+                } catch (e) {
+                    console.log('Camera enumeration not supported, using default');
+                }
+
+                // Optimized camera configuration for faster QR detection
                 await html5QrCode.start(
-                    { facingMode: "environment" },
+                    { 
+                        deviceId: cameraId,
+                        facingMode: "environment",
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
                     {
-                        fps: 10,
-                        qrbox: { width: 250, height: 250 }
+                        fps: 25,  // Increased from 10 to 25 for faster detection
+                        qrbox: { width: 350, height: 350 },  // Increased from 250x250
+                        aspectRatio: 1.0,
+                        disableFlip: false
                     },
                     onScanSuccess,
                     onScanFailure
