@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuishGuard - QR Code Security Scanner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e1e2e;
+            --darker: #11111b;
+            --light: #cdd6f4;
+            --surface: #313244;
+            --surface-light: #45475a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            min-height: 100vh;
+            color: var(--light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo i {
+            font-size: 3rem;
+            color: var(--primary);
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                padding: 15px;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                margin-top: 20px;
+            }
+
+            header {
+                padding: 30px 15px;
+            }
+
+            .logo h1 {
+                font-size: 2rem;
+            }
+
+            .logo i {
+                font-size: 2.5rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            header {
+                padding: 20px 15px;
+            }
+
+            .logo {
+                gap: 12px;
+                margin-bottom: 15px;
+            }
+
+            .logo i {
+                font-size: 2rem;
+            }
+
+            .logo h1 {
+                font-size: 1.7rem;
+            }
+
+            .tagline {
+                font-size: 0.95rem;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                margin-top: 15px;
+            }
+
+            .card {
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            .card-header {
+                gap: 10px;
+                margin-bottom: 18px;
+            }
+
+            .card-header i {
+                font-size: 1.2rem;
+            }
+
+            .card-header h2 {
+                font-size: 1.1rem;
+            }
+
+            .risk-score-container {
+                padding: 20px;
+                margin-bottom: 18px;
+            }
+
+            .risk-score {
+                width: 120px;
+                height: 120px;
+                margin: 0 auto 15px;
+            }
+
+            .risk-score-circle {
+                font-size: 2rem;
+                border-width: 6px;
+            }
+
+            .input-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .input-group input {
+                width: 100%;
+                padding: 12px 15px;
+                font-size: 1rem;
+            }
+
+            .button {
+                padding: 12px 18px;
+            }
+
+            .btn {
+                padding: 12px 15px;
+                font-size: 0.95rem;
+            }
+
+            .scanner-controls {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .scanner-controls .btn {
+                width: 100%;
+            }
+
+            .upload-btn {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+
+            .upload-btn i {
+                font-size: 1.2rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 18px;
+            }
+
+            .action-buttons .btn {
+                width: 100%;
+                padding: 14px;
+            }
+
+            .check-item {
+                padding: 12px 15px;
+                gap: 12px;
+            }
+
+            .check-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+
+            .check-name {
+                font-size: 0.95rem;
+                margin-bottom: 3px;
+            }
+
+            .check-message {
+                font-size: 0.85rem;
+            }
+
+            .recommendation-box {
+                padding: 15px;
+                gap: 12px;
+            }
+
+            .recommendation-box i {
+                font-size: 1.2rem;
+                min-width: 25px;
+            }
+
+            .recommendation-box div:last-child {
+                font-size: 0.9rem;
+            }
+
+            .how-it-works {
+                margin-top: 35px;
+                padding: 25px 16px;
+                border-radius: 16px;
+            }
+
+            .how-it-works h2 {
+                margin-bottom: 25px;
+                font-size: 1.5rem;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .step-icon {
+                width: 60px;
+                height: 60px;
+                margin: 0 auto 15px;
+                font-size: 1.5rem;
+            }
+
+            .step h3 {
+                font-size: 1rem;
+                margin-bottom: 8px;
+            }
+
+            .step p {
+                font-size: 0.85rem;
+            }
+
+            .modal {
+                max-width: 90vw;
+                max-height: 85vh;
+            }
+
+            .modal-header {
+                padding: 15px;
+            }
+
+            .modal-header h3 {
+                font-size: 1rem;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .detail-item {
+                margin-bottom: 12px;
+            }
+
+            .detail-label {
+                font-size: 0.8rem;
+            }
+
+            .detail-value {
+                padding: 10px 12px;
+                font-size: 0.85rem;
+            }
+
+            footer {
+                padding: 20px 15px;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            header {
+                padding: 15px 10px;
+            }
+
+            .logo {
+                flex-direction: column;
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+
+            .logo i {
+                font-size: 1.5rem;
+            }
+
+            .logo h1 {
+                font-size: 1.4rem;
+            }
+
+            .tagline {
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+
+            .main-content {
+                gap: 12px;
+                margin-top: 12px;
+            }
+
+            .card {
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .card-header {
+                gap: 8px;
+                margin-bottom: 14px;
+            }
+
+            .card-header i {
+                font-size: 1rem;
+            }
+
+            .card-header h2 {
+                font-size: 1rem;
+            }
+
+            .risk-score {
+                width: 100px;
+                height: 100px;
+                margin: 0 auto 12px;
+            }
+
+            .risk-score-circle {
+                font-size: 1.8rem;
+                border-width: 5px;
+            }
+
+            .risk-label {
+                font-size: 1rem;
+                letter-spacing: 1px;
+            }
+
+            .url-display {
+                padding: 12px 15px;
+                margin-bottom: 15px;
+                font-size: 0.8rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .input-group input {
+                padding: 11px 13px;
+                font-size: 16px;
+                border-radius: 10px;
+            }
+
+            .btn {
+                padding: 11px 13px;
+                font-size: 0.9rem;
+                border-radius: 10px;
+            }
+
+            .btn i {
+                font-size: 0.9rem;
+            }
+
+            .scanner-placeholder {
+                height: 250px;
+                border-radius: 12px;
+            }
+
+            .scanner-placeholder i {
+                font-size: 3rem;
+                margin-bottom: 10px;
+            }
+
+            .scanner-placeholder p {
+                font-size: 0.85rem;
+            }
+
+            .scanner-controls {
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 12px;
+            }
+
+            .upload-section {
+                margin-top: 12px;
+            }
+
+            .upload-btn {
+                padding: 11px;
+                border-radius: 10px;
+                font-size: 0.85rem;
+            }
+
+            .upload-btn i {
+                font-size: 1rem;
+            }
+
+            .manual-input {
+                margin-top: 12px;
+            }
+
+            .manual-input p {
+                font-size: 0.8rem;
+                margin-bottom: 8px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 14px;
+            }
+
+            .action-buttons .btn {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+
+            .checks-list {
+                gap: 10px;
+            }
+
+            .check-item {
+                padding: 10px 12px;
+                gap: 10px;
+                border-radius: 10px;
+            }
+
+            .check-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 0.85rem;
+                border-radius: 8px;
+            }
+
+            .check-name {
+                font-size: 0.9rem;
+                margin-bottom: 2px;
+            }
+
+            .check-message {
+                font-size: 0.8rem;
+            }
+
+            .check-arrow {
+                display: none;
+            }
+
+            .recommendation-box {
+                padding: 12px;
+                gap: 10px;
+                margin-top: 14px;
+                border-radius: 10px;
+            }
+
+            .recommendation-box i {
+                font-size: 1rem;
+                min-width: 20px;
+            }
+
+            .recommendation-box div:last-child {
+                font-size: 0.85rem;
+            }
+
+            .how-it-works {
+                margin-top: 25px;
+                padding: 16px 12px;
+                border-radius: 12px;
+            }
+
+            .how-it-works h2 {
+                margin-bottom: 20px;
+                font-size: 1.3rem;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .step {
+                text-align: center;
+            }
+
+            .step-icon {
+                width: 50px;
+                height: 50px;
+                margin: 0 auto 12px;
+                font-size: 1.3rem;
+                border-radius: 15px;
+            }
+
+            .step h3 {
+                font-size: 0.95rem;
+                margin-bottom: 6px;
+            }
+
+            .step p {
+                font-size: 0.8rem;
+                line-height: 1.4;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                margin-top: 20px;
+            }
+
+            .stat-item {
+                padding: 15px;
+                border-radius: 12px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+                margin-bottom: 3px;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            .modal-overlay {
+                padding: 10px;
+            }
+
+            .modal {
+                max-width: 95vw;
+                max-height: 90vh;
+                border-radius: 15px;
+            }
+
+            .modal-header {
+                padding: 12px;
+                border-radius: 15px 15px 0 0;
+            }
+
+            .modal-header h3 {
+                font-size: 0.95rem;
+            }
+
+            .modal-close {
+                font-size: 1.2rem;
+            }
+
+            .modal-body {
+                padding: 12px;
+            }
+
+            .detail-item {
+                margin-bottom: 10px;
+            }
+
+            .detail-label {
+                font-size: 0.75rem;
+            }
+
+            .detail-value {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+                border-radius: 6px;
+            }
+
+            footer {
+                padding: 15px 10px;
+                font-size: 0.75rem;
+            }
+
+            .empty-state {
+                padding: 30px 15px;
+            }
+
+            .empty-state i {
+                font-size: 3rem;
+                margin-bottom: 15px;
+            }
+
+            .empty-state h3 {
+                font-size: 1rem;
+                margin-bottom: 8px;
+            }
+
+            .empty-state p {
+                font-size: 0.85rem;
+            }
+
+            .loading {
+                padding: 30px 15px;
+            }
+
+            .spinner {
+                width: 40px;
+                height: 40px;
+                border-width: 3px;
+            }
+
+            .loading p {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .card-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        /* Scanner Section */
+        .scanner-container {
+            position: relative;
+        }
+
+        #reader {
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            background: var(--darker);
+        }
+
+        #reader video {
+            border-radius: 15px;
+        }
+
+        .scanner-placeholder {
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--darker);
+            border-radius: 15px;
+            border: 2px dashed var(--surface-light);
+        }
+
+        .scanner-placeholder i {
+            font-size: 4rem;
+            color: var(--surface-light);
+            margin-bottom: 15px;
+        }
+
+        .scanner-placeholder p {
+            color: #94a3b8;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            margin-top: 20px;
+        }
+
+        .upload-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--surface-light);
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            color: var(--light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .upload-btn:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .upload-btn input {
+            display: none;
+        }
+
+        /* Manual URL Input */
+        .manual-input {
+            margin-top: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 15px 20px;
+            background: var(--darker);
+            border: 2px solid var(--surface-light);
+            border-radius: 12px;
+            color: var(--light);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .input-group input::placeholder {
+            color: #64748b;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            background: var(--primary);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Scanner Controls */
+        .scanner-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .scanner-controls .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+        }
+
+        .btn-secondary:hover {
+            background: #5a5c6e;
+        }
+
+        /* Results Section */
+        .results-container {
+            display: none;
+        }
+
+        .results-container.active {
+            display: block;
+        }
+
+        /* Risk Score Display */
+        .risk-score-container {
+            text-align: center;
+            padding: 30px;
+            background: var(--darker);
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .risk-score {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+        }
+
+        .risk-score-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            border: 8px solid;
+        }
+
+        .risk-score-circle.low {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .risk-score-circle.medium {
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .risk-score-circle.high {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .risk-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .risk-label.low { color: var(--success); }
+        .risk-label.medium { color: var(--warning); }
+        .risk-label.high { color: var(--danger); }
+
+        /* URL Display */
+        .url-display {
+            background: var(--darker);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.95rem;
+        }
+
+        /* Check Items */
+        .checks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .check-item {
+            background: var(--darker);
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .check-item:hover {
+            background: #1a1a2e;
+        }
+
+        .check-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .check-icon.safe {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .check-icon.warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .check-icon.danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .check-icon.skipped {
+            background: rgba(100, 116, 139, 0.2);
+            color: #64748b;
+        }
+
+        .check-content {
+            flex: 1;
+        }
+
+        .check-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .check-message {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .check-arrow {
+            color: #64748b;
+        }
+
+        /* Recommendation Box */
+        .recommendation-box {
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .recommendation-box.low {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+        }
+
+        .recommendation-box.medium {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--warning);
+        }
+
+        .recommendation-box.high {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+        }
+
+        .recommendation-box i {
+            font-size: 1.5rem;
+        }
+
+        .recommendation-box.low i { color: var(--success); }
+        .recommendation-box.medium i { color: var(--warning); }
+        .recommendation-box.high i { color: var(--danger); }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #0d9668;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--surface-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Modal for Details */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--surface);
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--surface-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-size: 1.2rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .detail-item {
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            background: var(--darker);
+            padding: 12px 15px;
+            border-radius: 8px;
+            word-break: break-all;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            margin-top: 50px;
+            padding: 40px;
+            background: var(--surface);
+            border-radius: 20px;
+        }
+
+        .how-it-works h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.8rem;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary) 0%, #a855f7 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+        }
+
+        .step h3 {
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        /* Statistics */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-item {
+            background: var(--darker);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <i class="fas fa-shield-halved"></i>
+                <h1>QuishGuard</h1>
+            </div>
+            <p class="tagline">Protect yourself from QR code phishing attacks. Scan any QR code and instantly know if it's safe before clicking.</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Scanner Card -->
+            <div class="card scanner-container">
+                <div class="card-header">
+                    <i class="fas fa-qrcode"></i>
+                    <h2>Scan QR Code</h2>
+                </div>
+
+                <!-- Scanner Area -->
+                <div id="reader"></div>
+                <div class="scanner-placeholder" id="scanner-placeholder">
+                    <i class="fas fa-camera"></i>
+                    <p>Click "Start Camera" to scan a QR code</p>
+                </div>
+
+                <!-- Scanner Controls -->
+                <div class="scanner-controls">
+                    <button class="btn" id="start-camera">
+                        <i class="fas fa-video"></i> Start Camera
+                    </button>
+                    <button class="btn btn-secondary" id="stop-camera" style="display: none;">
+                        <i class="fas fa-stop"></i> Stop Camera
+                    </button>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="upload-section">
+                    <label class="upload-btn">
+                        <i class="fas fa-image"></i>
+                        <span>Upload QR Code Image</span>
+                        <input type="file" id="qr-upload" accept="image/*">
+                    </label>
+                </div>
+
+                <!-- PDF Upload Section -->
+                <div class="upload-section">
+                    <label class="upload-btn" style="border-color: #a855f7;">
+                        <i class="fas fa-file-pdf" style="color: #a855f7;"></i>
+                        <span>Extract QR Codes from PDF</span>
+                        <input type="file" id="pdf-upload" accept=".pdf">
+                    </label>
+                </div>
+
+                <!-- Manual URL Input -->
+                <div class="manual-input">
+                    <p style="margin-bottom: 10px; color: #94a3b8; font-size: 0.9rem;">Or enter URL manually:</p>
+                    <div class="input-group">
+                        <input type="url" id="manual-url" placeholder="https://example.com">
+                        <button class="btn" id="analyze-btn">
+                            <i class="fas fa-search"></i> Analyze
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Card -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-clipboard-check"></i>
+                    <h2>Security Report</h2>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="empty-state">
+                    <i class="fas fa-shield-halved"></i>
+                    <h3>No URL Scanned Yet</h3>
+                    <p>Scan a QR code or enter a URL to see the security analysis</p>
+                </div>
+
+                <!-- Loading State -->
+                <div class="loading" id="loading-state" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing URL security...</p>
+                </div>
+
+                <!-- Results -->
+                <div class="results-container" id="results-container">
+                    <!-- Risk Score -->
+                    <div class="risk-score-container">
+                        <div class="risk-score">
+                            <div class="risk-score-circle" id="risk-circle">
+                                <span id="risk-score-value">0</span>
+                            </div>
+                        </div>
+                        <div class="risk-label" id="risk-label">LOW RISK</div>
+                    </div>
+
+                    <!-- Scanned URL -->
+                    <div class="url-display" id="scanned-url"></div>
+
+                    <!-- Checks List -->
+                    <div class="checks-list" id="checks-list">
+                        <!-- Dynamically populated -->
+                    </div>
+
+                    <!-- Recommendation -->
+                    <div class="recommendation-box low" id="recommendation-box">
+                        <i class="fas fa-info-circle"></i>
+                        <div id="recommendation-text"></div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn btn-danger" id="btn-dont-proceed">
+                            <i class="fas fa-times"></i> Don't Proceed
+                        </button>
+                        <button class="btn btn-success" id="btn-proceed">
+                            <i class="fas fa-external-link-alt"></i> Proceed Anyway
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works -->
+        <div class="how-it-works">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <h3>Scan QR Code</h3>
+                    <p>Use your camera or upload an image of the QR code you want to verify</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Deep Analysis</h3>
+                    <p>Our system checks the URL against multiple security databases and performs threat analysis</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Get Report</h3>
+                    <p>Receive an instant security report with risk score and detailed findings</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Decide Safely</h3>
+                    <p>Make an informed decision whether to proceed based on our security assessment</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Check Details</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 QuishGuard. Stay safe from QR phishing attacks.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script>
+        // DOM Elements
+        const readerElement = document.getElementById('reader');
+        const scannerPlaceholder = document.getElementById('scanner-placeholder');
+        const startCameraBtn = document.getElementById('start-camera');
+        const stopCameraBtn = document.getElementById('stop-camera');
+        const qrUpload = document.getElementById('qr-upload');
+        const pdfUpload = document.getElementById('pdf-upload');
+        const manualUrl = document.getElementById('manual-url');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const emptyState = document.getElementById('empty-state');
+        const loadingState = document.getElementById('loading-state');
+        const resultsContainer = document.getElementById('results-container');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalClose = document.getElementById('modal-close');
+        const btnProceed = document.getElementById('btn-proceed');
+        const btnDontProceed = document.getElementById('btn-dont-proceed');
+
+        let html5QrCode = null;
+        let currentUrl = '';
+
+        // Initialize QR Scanner
+        function initScanner() {
+            html5QrCode = new Html5Qrcode("reader");
+        }
+
+        // Start Camera
+        startCameraBtn.addEventListener('click', async () => {
+            try {
+                scannerPlaceholder.style.display = 'none';
+                readerElement.style.display = 'block';
+                
+                if (!html5QrCode) {
+                    initScanner();
+                }
+
+                await html5QrCode.start(
+                    { facingMode: "environment" },
+                    {
+                        fps: 10,
+                        qrbox: { width: 250, height: 250 }
+                    },
+                    onScanSuccess,
+                    onScanFailure
+                );
+
+                startCameraBtn.style.display = 'none';
+                stopCameraBtn.style.display = 'flex';
+            } catch (err) {
+                console.error('Camera error:', err);
+                alert('Could not access camera. Please check permissions or try uploading an image.');
+                scannerPlaceholder.style.display = 'flex';
+            }
+        });
+
+        // Stop Camera
+        stopCameraBtn.addEventListener('click', async () => {
+            if (html5QrCode && html5QrCode.isScanning) {
+                await html5QrCode.stop();
+            }
+            readerElement.style.display = 'none';
+            scannerPlaceholder.style.display = 'flex';
+            startCameraBtn.style.display = 'flex';
+            stopCameraBtn.style.display = 'none';
+        });
+
+        // QR Scan Success
+        function onScanSuccess(decodedText) {
+            // Stop camera after successful scan
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop();
+                readerElement.style.display = 'none';
+                scannerPlaceholder.style.display = 'flex';
+                startCameraBtn.style.display = 'flex';
+                stopCameraBtn.style.display = 'none';
+            }
+            
+            analyzeUrl(decodedText);
+        }
+
+        function onScanFailure(error) {
+            // Ignore scan failures (no QR code in frame)
+        }
+
+        // Handle file upload
+        qrUpload.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                if (!html5QrCode) {
+                    initScanner();
+                }
+
+                const result = await html5QrCode.scanFile(file, true);
+                analyzeUrl(result);
+            } catch (err) {
+                console.error('Scan error:', err);
+                alert('Could not read QR code from image. Please try another image.');
+            }
+        });
+
+        // Handle PDF upload
+        pdfUpload.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Show loading state
+            emptyState.style.display = 'none';
+            resultsContainer.classList.remove('active');
+            loadingState.style.display = 'block';
+            document.querySelector('#loading-state p').textContent = 'Extracting QR codes from PDF...';
+
+            try {
+                const formData = new FormData();
+                formData.append('pdf', file);
+
+                const response = await fetch('/api/extract-pdf', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayPdfResults(data);
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to process PDF'));
+                    loadingState.style.display = 'none';
+                    emptyState.style.display = 'block';
+                }
+            } catch (err) {
+                console.error('PDF processing error:', err);
+                alert('Failed to process PDF. Please try again.');
+                loadingState.style.display = 'none';
+                emptyState.style.display = 'block';
+            }
+
+            // Reset loading text
+            document.querySelector('#loading-state p').textContent = 'Analyzing URL security...';
+            // Reset file input
+            pdfUpload.value = '';
+        });
+
+        // Display PDF extraction results
+        function displayPdfResults(data) {
+            loadingState.style.display = 'none';
+
+            if (data.total_found === 0) {
+                alert('No QR codes found in the PDF file.');
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            // Show PDF results modal
+            showPdfResultsModal(data);
+        }
+
+        function showPdfResultsModal(data) {
+            document.getElementById('modal-title').textContent = `PDF Scan Results (${data.total_found} QR codes found)`;
+            
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = '';
+
+            // Summary
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = 'detail-item';
+            summaryDiv.innerHTML = `
+                <div class="detail-label">Summary</div>
+                <div class="detail-value">${data.message}</div>
+            `;
+            modalBody.appendChild(summaryDiv);
+
+            // Each QR code result
+            data.qr_codes.forEach((qr, index) => {
+                const qrDiv = document.createElement('div');
+                qrDiv.style.marginTop = '20px';
+                qrDiv.style.padding = '15px';
+                qrDiv.style.background = 'var(--darker)';
+                qrDiv.style.borderRadius = '10px';
+                qrDiv.style.borderLeft = `4px solid var(--${qr.risk_level === 'low' ? 'success' : qr.risk_level === 'medium' ? 'warning' : 'danger'})`;
+                
+                const riskColor = qr.risk_level === 'low' ? 'success' : qr.risk_level === 'medium' ? 'warning' : 'danger';
+                
+                qrDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong style="color: var(--light);">QR Code #${qr.index} (Page ${qr.page})</strong>
+                        <span style="background: var(--${riskColor}); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                            ${qr.risk_level ? qr.risk_level.toUpperCase() : 'UNKNOWN'} ${qr.risk_score !== undefined ? '(' + qr.risk_score + ')' : ''}
+                        </span>
+                    </div>
+                    <div style="word-break: break-all; font-family: monospace; font-size: 0.85rem; color: #94a3b8; margin-bottom: 10px;">
+                        ${qr.url}
+                    </div>
+                    ${qr.recommendation ? `<div style="font-size: 0.85rem; color: var(--${riskColor});">${qr.recommendation}</div>` : ''}
+                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button onclick="analyzeUrl('${qr.url.replace(/'/g, "\\'")}')" style="padding: 8px 15px; background: var(--primary); border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 0.85rem;">
+                            <i class="fas fa-search"></i> View Details
+                        </button>
+                        ${qr.risk_level !== 'high' ? `
+                        <button onclick="window.open('${qr.url.replace(/'/g, "\\'")}', '_blank')" style="padding: 8px 15px; background: var(--success); border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 0.85rem;">
+                            <i class="fas fa-external-link-alt"></i> Open URL
+                        </button>
+                        ` : ''}
+                    </div>
+                `;
+                
+                modalBody.appendChild(qrDiv);
+            });
+
+            modalOverlay.classList.add('active');
+        }
+
+        // Manual URL analysis
+        analyzeBtn.addEventListener('click', () => {
+            const url = manualUrl.value.trim();
+            if (url) {
+                analyzeUrl(url);
+            }
+        });
+
+        manualUrl.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const url = manualUrl.value.trim();
+                if (url) {
+                    analyzeUrl(url);
+                }
+            }
+        });
+
+        // Analyze URL
+        async function analyzeUrl(url) {
+            currentUrl = url;
+            
+            // Show loading state
+            emptyState.style.display = 'none';
+            resultsContainer.classList.remove('active');
+            loadingState.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResults(data);
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to analyze URL'));
+                    loadingState.style.display = 'none';
+                    emptyState.style.display = 'block';
+                }
+            } catch (err) {
+                console.error('Analysis error:', err);
+                alert('Failed to analyze URL. Please try again.');
+                loadingState.style.display = 'none';
+                emptyState.style.display = 'block';
+            }
+        }
+
+        // Display Results
+        function displayResults(data) {
+            loadingState.style.display = 'none';
+            resultsContainer.classList.add('active');
+
+            // Update risk score
+            const riskCircle = document.getElementById('risk-circle');
+            const riskScoreValue = document.getElementById('risk-score-value');
+            const riskLabel = document.getElementById('risk-label');
+
+            riskScoreValue.textContent = data.risk_score;
+            riskCircle.className = 'risk-score-circle ' + data.risk_level;
+            riskLabel.className = 'risk-label ' + data.risk_level;
+            riskLabel.textContent = data.risk_level.toUpperCase() + ' RISK';
+
+            // Update URL
+            document.getElementById('scanned-url').textContent = data.url;
+
+            // Update checks list
+            const checksList = document.getElementById('checks-list');
+            checksList.innerHTML = '';
+
+            const checkNames = {
+                'url_analysis': { name: 'URL Structure Analysis', icon: 'fa-link' },
+                'ssl_check': { name: 'SSL Certificate', icon: 'fa-lock' },
+                'domain_age': { name: 'Domain Age', icon: 'fa-calendar' },
+                'typosquatting': { name: 'Typosquatting Detection', icon: 'fa-spell-check' },
+                'suspicious_keywords': { name: 'Suspicious Keywords', icon: 'fa-exclamation-triangle' },
+                'virustotal': { name: 'VirusTotal Scan', icon: 'fa-virus' },
+                'google_safe_browsing': { name: 'Google Safe Browsing', icon: 'fa-google' }
+            };
+
+            for (const [key, check] of Object.entries(data.checks)) {
+                const info = checkNames[key] || { name: key, icon: 'fa-check' };
+                const status = check.status || 'skipped';
+                
+                const checkItem = document.createElement('div');
+                checkItem.className = 'check-item';
+                checkItem.innerHTML = `
+                    <div class="check-icon ${status}">
+                        <i class="fas ${getStatusIcon(status)}"></i>
+                    </div>
+                    <div class="check-content">
+                        <div class="check-name">${info.name}</div>
+                        <div class="check-message">${check.message || 'No information available'}</div>
+                    </div>
+                    <div class="check-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                `;
+
+                checkItem.addEventListener('click', () => showCheckDetails(info.name, check));
+                checksList.appendChild(checkItem);
+            }
+
+            // Update recommendation
+            const recommendationBox = document.getElementById('recommendation-box');
+            recommendationBox.className = 'recommendation-box ' + data.risk_level;
+            document.getElementById('recommendation-text').textContent = data.recommendation;
+
+            // Update proceed button visibility based on risk
+            if (data.risk_level === 'high') {
+                btnProceed.style.display = 'none';
+            } else {
+                btnProceed.style.display = 'flex';
+            }
+        }
+
+        function getStatusIcon(status) {
+            const icons = {
+                'safe': 'fa-check',
+                'warning': 'fa-exclamation',
+                'danger': 'fa-times',
+                'skipped': 'fa-minus'
+            };
+            return icons[status] || 'fa-question';
+        }
+
+        // Show check details in modal
+        function showCheckDetails(title, check) {
+            document.getElementById('modal-title').textContent = title;
+            
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = '';
+
+            // Status
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'detail-item';
+            statusDiv.innerHTML = `
+                <div class="detail-label">Status</div>
+                <div class="detail-value" style="color: var(--${check.status === 'safe' ? 'success' : check.status === 'warning' ? 'warning' : 'danger'})">${(check.status || 'unknown').toUpperCase()}</div>
+            `;
+            modalBody.appendChild(statusDiv);
+
+            // Message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'detail-item';
+            messageDiv.innerHTML = `
+                <div class="detail-label">Message</div>
+                <div class="detail-value">${check.message || 'No message'}</div>
+            `;
+            modalBody.appendChild(messageDiv);
+
+            // Additional details
+            for (const [key, value] of Object.entries(check)) {
+                if (key !== 'status' && key !== 'message') {
+                    const detailDiv = document.createElement('div');
+                    detailDiv.className = 'detail-item';
+                    detailDiv.innerHTML = `
+                        <div class="detail-label">${formatKey(key)}</div>
+                        <div class="detail-value">${formatValue(value)}</div>
+                    `;
+                    modalBody.appendChild(detailDiv);
+                }
+            }
+
+            modalOverlay.classList.add('active');
+        }
+
+        function formatKey(key) {
+            return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function formatValue(value) {
+            if (Array.isArray(value)) {
+                return value.map(v => typeof v === 'object' ? JSON.stringify(v) : v).join(', ') || 'None';
+            } else if (typeof value === 'object') {
+                return JSON.stringify(value, null, 2);
+            }
+            return value;
+        }
+
+        // Close modal
+        modalClose.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.remove('active');
+            }
+        });
+
+        // Action buttons
+        btnProceed.addEventListener('click', () => {
+            if (currentUrl) {
+                if (confirm('Are you sure you want to proceed to this website? This may be risky.')) {
+                    window.open(currentUrl, '_blank');
+                }
+            }
+        });
+
+        btnDontProceed.addEventListener('click', () => {
+            currentUrl = '';
+            emptyState.style.display = 'block';
+            resultsContainer.classList.remove('active');
+            manualUrl.value = '';
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            readerElement.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
